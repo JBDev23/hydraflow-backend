@@ -1,0 +1,174 @@
+// 1. Configuración del Generador
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------------------------------
+// USUARIOS Y PERFIL
+// --------------------------------------------------------
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  provider      String    @default("email")
+  providerId    String?   
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones (1 a 1)
+  profile       Profile?
+  settings      Settings?
+  gameStats     GameStats?
+
+  // Relaciones (1 a N)
+  waterLogs     WaterLog[]
+  items         UserItem[]
+  achievements  UserAchievement[]
+
+  @@map("users") // Nombre real de la tabla en Postgres
+}
+
+model Profile {
+  id            Int      @id @default(autoincrement())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  weight        Float?   // kg
+  height        Float?   // cm
+  age           Int?
+  gender        String?  // 'male', 'female', 'other'
+  activityLevel String?  // 'sedentary', 'active', etc.
+  dailyGoal     Int      @default(2000) // ml
+
+  @@map("profiles")
+}
+
+model Settings {
+  id            Int      @id @default(autoincrement())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Guardamos horas como JSON: { "hours": 8, "minutes": 30 }
+  wakeTime      Json?    
+  sleepTime     Json?
+
+  // Configuración UI como JSONB (Flexible)
+  // Ej: { "theme": "dark", "language": "es", "unit": "cm" }
+  preferences   Json?    
+  
+  // Notificaciones como JSONB
+  // Ej: { "enabled": true, "sound": "drop", "frequency": "smart" }
+  notifications Json?
+
+  @@map("settings")
+}
+
+// --------------------------------------------------------
+// ACTIVIDAD (CORE LOOP)
+// --------------------------------------------------------
+
+model WaterLog {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amount    Int      // ml (ej: 250)
+  timestamp DateTime @default(now())
+
+  @@map("water_logs")
+}
+
+// --------------------------------------------------------
+// GAMIFICACIÓN (ESTADO)
+// --------------------------------------------------------
+
+model GameStats {
+  id            Int      @id @default(autoincrement())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  level         Int      @default(1)
+  currentXp     Int      @default(0)
+  progress      Int      @default(0)
+  totalGoalsReached Int  @default(0) 
+  dropsBalance  Int      @default(0) // Monedas
+  currentStreak Int      @default(0)
+  lastActiveDate DateTime? // Para calcular si se rompe la racha
+  totalVolume   Int      @default(0)
+  achievementsCount Int  @default(0)
+  skinsCount    Int      @default(0)
+
+  @@map("game_stats")
+}
+
+// --------------------------------------------------------
+// CATÁLOGO (TIENDA Y LOGROS) - DATOS ESTÁTICOS
+// --------------------------------------------------------
+
+model CatalogItem {
+  id          String   @id // Ej: "hat1", "sunGlasses" (Manual para coincidir con frontend)
+  category    String   // 'glasses', 'hat', 'neck'
+  price       Int      
+  isActive    Boolean  @default(true)
+
+  // Internacionalización (i18n) usando JSONB
+  // Ej: { "es": "Gafas de Sol", "en": "Sunglasses" }
+  name        Json     
+  description Json?
+
+  // Relación inversa (Quién tiene este item)
+  usersOwned  UserItem[]
+
+  @@map("catalog_items")
+}
+
+model CatalogAchievement {
+  id          String   @id // Ej: "first_sip"
+  icon        String   // Ej: "droplet"
+  condition   String   // Código interno para lógica backend (ej: "DRINK_1_GLASS")
+  
+  // i18n
+  name        Json
+  description Json
+
+  usersUnlocked UserAchievement[]
+
+  @@map("catalog_achievements")
+}
+
+// --------------------------------------------------------
+// INVENTARIO Y PROGRESO DEL USUARIO
+// --------------------------------------------------------
+
+model UserItem {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  itemId      String
+  item        CatalogItem @relation(fields: [itemId], references: [id])
+
+  isEquipped  Boolean  @default(false)
+  acquiredAt  DateTime @default(now())
+
+  @@map("user_items")
+}
+
+model UserAchievement {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  achievementId String
+  achievement   CatalogAchievement @relation(fields: [achievementId], references: [id])
+
+  unlockedAt    DateTime @default(now())
+
+  @@map("user_achievements")
+}
