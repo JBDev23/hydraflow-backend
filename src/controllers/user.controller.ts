@@ -156,3 +156,19 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: "Failed to update profile", details: String(error) });
   }
 };
+
+export const deleteAccount = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
+    return res.json({ success: true, message: "Cuenta eliminada correctamente" });
+
+  } catch (error) {
+    console.error("Delete Account Error:", error);
+    return res.status(500).json({ error: "No se pudo eliminar la cuenta" });
+  }
+};

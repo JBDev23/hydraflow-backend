@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getProfile, updateProfile } from '../controllers/user.controller';
+import { deleteAccount, getProfile, updateProfile } from '../controllers/user.controller';
 import { ensureAuth } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -9,5 +9,8 @@ router.put('/profile', ensureAuth, updateProfile);
 
 // GET /user/profile
 router.get('/profile', ensureAuth, getProfile)
+
+// DELETE /user/account
+router.delete('/account', ensureAuth, deleteAccount);
 
 export default router;
