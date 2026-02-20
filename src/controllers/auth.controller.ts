@@ -9,16 +9,6 @@ const DEFAULT_NOTIFICATIONS = {
   sound: "drop"
 };
 
-const DEFAULT_PREFERENCES = {
-  unitDist: "cm",
-  unitWeight: "kg",
-  soundEffect: true,
-  volume: 50,
-  vibration: true,
-  theme: "light",
-  language: "es"
-};
-
 const TOKEN_EXPIRATION = '30d'; 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ""; 
@@ -30,7 +20,7 @@ const SECRET = process.env.JWT_SECRET || "default_secret_change_me";
 export const socialLogin = async (req: Request, res: Response) => {
   try {
     // Recibimos 'token' (Google) o 'email/name' (Test)
-    const { token, provider, email: manualEmail, name: manualName } = req.body;
+    const { token, provider, email: manualEmail, name: manualName, deviceLanguage } = req.body;
 
     let email = "";
     let name = "";
@@ -67,6 +57,9 @@ export const socialLogin = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Provider not supported' });
     }
 
+    const userLang = deviceLanguage || "es";
+    const DEFAULT_PREFERENCES = { unitDist: "cm", unitWeight: "kg", soundEffect: true, volume: 50, vibration: true, theme: "light", language: userLang };
+
     // 3. Buscar o Crear Usuario (Lógica idéntica a la anterior)
     const user = await prisma.user.upsert({
       where: { email },
@@ -76,7 +69,7 @@ export const socialLogin = async (req: Request, res: Response) => {
         profile: { create: { dailyGoal: 2000, activityLevel: "sedentary" } },
         settings: { create: { notifications: DEFAULT_NOTIFICATIONS, preferences: DEFAULT_PREFERENCES } },
         gameStats: { create: { level: 1, currentXp: 0, progress: 0, dropsBalance: 10, skinsCount: 1 } },
-        items: { create: { itemId: "sunGlasses", isEquipped: true } }
+        items: { create: { itemId: "sunGlasses", isEquipped: false } }
       },
       include: {
         profile: true, settings: true, gameStats: true, items: true, achievements: true
