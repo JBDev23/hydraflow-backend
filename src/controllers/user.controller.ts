@@ -172,3 +172,20 @@ export const deleteAccount = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ error: "No se pudo eliminar la cuenta" });
   }
 };
+
+export const exportUserData = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    
+    const logs = await prisma.waterLog.findMany({
+      where: { userId },
+      orderBy: { timestamp: 'desc' }
+    });
+
+    return res.json({ success: true, logs });
+
+  } catch (error) {
+    console.error("Export Data Error:", error);
+    return res.status(500).json({ error: "No se pudo exportar los datos" });
+  }
+};

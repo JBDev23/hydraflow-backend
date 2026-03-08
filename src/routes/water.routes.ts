@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { logWater, getDailyMetrics, revertLog, getRangeMetrics, getStatsGraph } from '../controllers/water.controller';
 import { ensureAuth } from '../middleware/auth.middleware';
+import { exportUserData } from '../controllers/user.controller';
 
 const router = Router();
 
@@ -19,6 +20,9 @@ router.get('/range', ensureAuth, getRangeMetrics);
 
 // GET /water/stats?mode=week&refDate=2026-02-15
 router.get('/stats', ensureAuth, getStatsGraph);
+
+// GET water/export
+router.get('/export', ensureAuth, exportUserData);    
 
 
 export default router;

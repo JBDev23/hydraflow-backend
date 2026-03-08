@@ -181,6 +181,7 @@ export const logWater = async (req: AuthRequest, res: Response) => {
 
             // F. Calcular racha
             const newStreak = calculateNewStreak(stats.currentStreak, stats.lastActiveDate);
+            const isNewStreak = newStreak != stats.currentStreak
 
             // G. Actualizar Stats en BD
             const updatedStats = await tx.gameStats.update({
@@ -199,7 +200,7 @@ export const logWater = async (req: AuthRequest, res: Response) => {
 
             const {newUnlocks, totalCount} = await checkAndUnlockAchievements(tx, userId, updatedStats);
 
-            return { log, updatedStats, progressResult, xpGained, newUnlocks, totalCount};
+            return { log, updatedStats, progressResult, xpGained, newUnlocks, totalCount, isNewStreak};
         });
 
         return res.json({
@@ -218,7 +219,8 @@ export const logWater = async (req: AuthRequest, res: Response) => {
                 goalsReached: result.updatedStats.totalGoalsReached,
                 totalVolume: result.updatedStats.totalVolume,
                 newAchievements: result.newUnlocks,
-                achievementsCount: result.totalCount
+                achievementsCount: result.totalCount,
+                isNewStreak: result.isNewStreak
             }
         });
 
@@ -337,7 +339,7 @@ export const revertLog = async (req: AuthRequest, res: Response) => {
                     currentXp: regressionResult.newXp,
                     progress: regressionResult.newProgress,
                     dropsBalance: { decrement: regressionResult.dropsToDeduct },
-                    totalGoalsReached: { decrement: goalDecrement },
+                    totalGoalsReached: Math.max(0, stats.totalGoalsReached - goalDecrement),
                     currentStreak: newStreak,
                     lastActiveDate: newLastActiveDate,
                     totalVolume: { decrement: lastLog.amount }
