@@ -175,6 +175,8 @@ export const logWater = async (req: AuthRequest, res: Response) => {
                 goalIncrement = 1;
             }
 
+            const isGoalReached = goalIncrement == 1
+
             // E. Calcular Gamificación
             const xpGained = calculateXpGain(parseInt(amount));
             const progressResult = processLevelUp(stats.level, stats.currentXp, xpGained);
@@ -200,7 +202,7 @@ export const logWater = async (req: AuthRequest, res: Response) => {
 
             const {newUnlocks, totalCount} = await checkAndUnlockAchievements(tx, userId, updatedStats);
 
-            return { log, updatedStats, progressResult, xpGained, newUnlocks, totalCount, isNewStreak};
+            return { log, updatedStats, progressResult, xpGained, newUnlocks, totalCount, isGoalReached, isNewStreak};
         });
 
         return res.json({
@@ -220,7 +222,8 @@ export const logWater = async (req: AuthRequest, res: Response) => {
                 totalVolume: result.updatedStats.totalVolume,
                 newAchievements: result.newUnlocks,
                 achievementsCount: result.totalCount,
-                isNewStreak: result.isNewStreak
+                isNewStreak: result.isNewStreak,
+                isGoalReached: result.isGoalReached
             }
         });
 
