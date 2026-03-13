@@ -20,7 +20,7 @@ const SECRET = process.env.JWT_SECRET || "default_secret_change_me";
 export const socialLogin = async (req: Request, res: Response) => {
   try {
     // Recibimos 'token' (Google) o 'email/name' (Test)
-    const { token, provider, email: manualEmail, name: manualName, deviceLanguage } = req.body;
+    const { token, provider, manualEmail, manualName, deviceLanguage } = req.body;
 
     let email = "";
     let name = "";
