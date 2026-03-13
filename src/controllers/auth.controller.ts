@@ -40,7 +40,7 @@ export const socialLogin = async (req: Request, res: Response) => {
             if (!payload?.email) throw new Error("No email in Google Token");
 
             email = payload.email;
-            name = payload.name || "Usuario Google";
+            name = manualName || payload.name || "Usuario Google";
             providerId = payload.sub; // ID único de Google
 
         } catch (error) {
