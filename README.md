@@ -1,3 +1,13 @@
+# 🚨 REPOSITORIO ARCHIVADO / DEPRECADO 🚨
+
+> **⚠️ ATENCIÓN:** Este repositorio ya no recibe mantenimiento y ha sido **archivado**. 
+> Todo el desarrollo de HydraFlow (tanto el Backend como la App móvil) se ha unificado y movido a un nuevo **monorepo**.
+> 
+> 👉 **Descubre el código actualizado, aporta y abre issues en el nuevo repositorio principal:** 
+> ### [🔗 github.com/JBDev23/hydraflow](https://github.com/JBDev23/hydraflow)
+
+---
+
 # 💧 Hydraflow Backend
 
 <p align="center">
@@ -6,10 +16,10 @@
 
 > **El motor detrás de tu hidratación diaria. Una API robusta y de código abierto para el registro de agua y gamificación.**
 
-Este repositorio contiene exclusivamente el **Backend** del proyecto Hydraflow. Se encarga de gestionar la lógica de negocio, la base de datos, la autenticación de usuarios, el registro de consumo de agua y el sistema de logros (gamificación).
+Este proyecto contiene el **Backend** de Hydraflow. Se encarga de gestionar la lógica de negocio, la base de datos, la autenticación de usuarios, el registro de consumo de agua y el sistema de logros (gamificación).
 
-⚠️ **Nota:** Este proyecto se encuentra actualmente en **fase de pruebas (Testing)**.  
-👉 _El código del Frontend se encuentra en un repositorio separado: [hydraflow-app](https://github.com/JBDev23/hydraflow-app)._
+⚠️ **Nota:** El proyecto se encuentra en **fase de pruebas (Testing)**.  
+👉 _Actualmente el código forma parte del monorepo principal: [JBDev23/hydraflow](https://github.com/JBDev23/hydraflow)._
 
 ---
 
@@ -60,28 +70,22 @@ La estructura de `modules/` está preparada para una migración futura a Nest (v
 
 ---
 
-## 🤝 Contribución
+## 🤝 Contribución (Migrado)
 
-¡El proyecto es de código abierto y me encanta recibir ayuda!
+¡El proyecto es de código abierto y nos encanta recibir ayuda! Sin embargo, **todo el desarrollo activo ocurre en el monorepo**.
 
-1. Haz un _Fork_ del proyecto.
-2. Crea tu rama (`git checkout -b feature/NuevaRuta`).
-3. Haz _Commit_ de tus cambios (`git commit -m 'Añadir nueva ruta para X'`).
-4. Asegúrate de que los tests pasen (`pnpm test`).
-5. Haz _Push_ a la rama (`git push origin feature/NuevaRuta`).
-6. Abre un _Pull Request_.
+1. Ve al nuevo repositorio: [**JBDev23/hydraflow**](https://github.com/JBDev23/hydraflow).
+2. Haz un _Fork_ de ese proyecto.
+3. Crea tu rama (`git checkout -b feature/NuevaRuta`).
+4. Haz _Commit_ de tus cambios y abre tu _Pull Request_ allí.
 
----
-
-## 📄 Licencia
-
-Este proyecto es de Código Abierto. Consulta el archivo `LICENSE` (si aplica) para más detalles.
+*(Por favor, no abras Pull Requests en este repositorio archivado, ya que no serán revisados).*
 
 ---
 
 ## Checks de CI (local)
 
-GitHub Actions ejecuta en cada push/PR a `main`/`master` los mismos checks que puedes correr localmente. Usa las variables de `.env.example` (Postgres local con Docker; no uses `.env.production` ni credenciales de Neon):
+Si estás trabajando desde el [nuevo monorepo](https://github.com/JBDev23/hydraflow), puedes ejecutar los checks locales para el backend. Usa las variables de `.env.example` (Postgres local con Docker; no uses `.env.production` ni credenciales de Neon):
 
 ```bash
 cd hydraflow-backend
@@ -90,3 +94,7 @@ pnpm install
 pnpm prisma:migrate:deploy   # en desarrollo puedes usar prisma:migrate
 pnpm format:check && pnpm lint && pnpm build && pnpm test
 ```
+
+## 📄 Licencia
+
+Este proyecto es de Código Abierto. Consulta el archivo LICENSE en el monorepo principal para más detalles.
